@@ -1,0 +1,52 @@
+Building configuration...
+
+Current configuration:
+!
+frr version 7.5.1
+frr defaults traditional
+hostname ATLA_router
+!
+ip router-id 37.157.0.1
+ip route 37.0.0.0/8 Null0
+!
+interface ext_40_HAML
+ ip address 179.1.42.1/30
+!
+interface host
+ ip address 37.107.0.2/24
+!
+interface lo
+ ip address 37.157.0.1/32
+!
+interface port_NEWY
+ ip address 37.0.11.2/30
+!
+interface port_ZURI
+ ip address 37.0.13.1/30
+!
+router bgp 37
+ bgp router-id 37.157.0.1
+ neighbor 37.155.0.1 remote-as 37
+ neighbor 37.155.0.1 update-source 37.157.0.1
+ neighbor 37.158.0.1 remote-as 37
+ neighbor 37.158.0.1 update-source 37.157.0.1
+ neighbor 179.1.42.2 remote-as 40
+ neighbor 179.1.42.2 update-source 179.1.42.1
+ !
+ address-family ipv4 unicast
+  network 37.0.0.0/8
+  neighbor 179.1.42.2 route-map ALLOW_ALL in
+  neighbor 179.1.42.2 route-map ALLOW_ALL out
+ exit-address-family
+!
+router ospf
+ ospf router-id 37.157.0.1
+ redistribute connected
+ network 37.0.11.0/30 area 0
+ network 37.0.13.0/30 area 0
+!
+route-map ALLOW_ALL permit 37
+!
+line vty
+!
+end
